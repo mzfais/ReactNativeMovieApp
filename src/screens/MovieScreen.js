@@ -71,8 +71,6 @@ export default function MovieScreen() {
     // setLoading(false);
   };
 
-  let movieName = 'Equalizer 3';
-
   return (
     <ScrollView
       contentContainerStyle={{paddingBottom: 20}}
@@ -166,12 +164,14 @@ export default function MovieScreen() {
                 </Text>
               </View>
               {/* Pemeran */}
-              {cast.length > 0 && <Cast navigation={navigation} cast={cast} />}
+              {cast.length > 0 && (
+                <Cast navigation={navigation} cast={cast.slice(0, 8)} />
+              )}
               {similarMovies.length > 0 && (
                 <MovieList
                   title="Film Serupa"
                   hideSeeAll={true}
-                  data={similarMovies}
+                  data={similarMovies.slice(0, 10)}
                 />
               )}
             </>

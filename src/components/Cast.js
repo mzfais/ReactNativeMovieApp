@@ -4,8 +4,7 @@ import {fallbackPersonImage, image185} from '../api/MovieDb';
 import ProgressiveImage from 'rn-progressive-image';
 
 export default function Cast({cast, navigation}) {
-  let characterName = 'John Wick';
-  let personName = 'Keanu Reeves';
+  console.log(cast.length);
   return (
     <View className="my-6">
       <Text className="text-white text-lg mx-4 mb-5">Pemeran Utama</Text>

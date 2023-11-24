@@ -81,19 +81,19 @@ export default function HomeScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{paddingBottom: 10}}>
           {/* daftar film trending dengan carousel */}
-          {trending.length > 0 && <TrendingMovies data={trending} />}
+          {trending.length > 0 && <TrendingMovies data={trending.slice(10)} />}
 
           {/* daftar film akan tayang */}
           <MovieList
             title="Akan Tayang"
-            data={upcoming}
+            data={upcoming.slice(0, 6)}
             seeAllScreen="Upcoming"
           />
 
           {/* daftar film rating tertinggi */}
           <MovieList
             title="Rating Teratas"
-            data={topRated}
+            data={topRated.slice(0, 6)}
             seeAllScreen="TopRated"
           />
         </ScrollView>
