@@ -15,7 +15,7 @@ import {ArrowRightIcon} from 'react-native-heroicons/outline';
 import ProgressiveImage from 'rn-progressive-image';
 var {width, height} = Dimensions.get('window');
 
-export default function MovieList({title, data, hideSeeAll}) {
+export default function MovieList({title, data, hideSeeAll, seeAllScreen}) {
   let movieName = 'Equalizer 3';
   const navigation = useNavigation();
   return (
@@ -24,7 +24,7 @@ export default function MovieList({title, data, hideSeeAll}) {
       <View className="mx-4 flex-row justify-between items-center">
         <Text className="text-white text-xl">{title}</Text>
         {!hideSeeAll && (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.push(seeAllScreen)}>
             <ArrowRightIcon size={30} strokeWidth={2} color={theme.text} />
           </TouchableOpacity>
         )}

@@ -7,15 +7,18 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Image,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import React, {useCallback, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
-import {XMarkIcon} from 'react-native-heroicons/outline';
+import {ChevronLeftIcon, XMarkIcon} from 'react-native-heroicons/outline';
 import Loading from '../components/Loading';
 import {debounce} from 'lodash';
 import {fallbackMoviePoster, fetchSearchMovies, image185} from '../api/MovieDb';
 import ProgressiveImage from 'rn-progressive-image';
+import {styles, theme} from '../theme';
 
 const {width, height} = Dimensions.get('window');
 
@@ -23,7 +26,11 @@ export default function SearchScreen() {
   const navigation = useNavigation();
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const ios = Platform.OS === 'ios';
+
   const handleSearch = value => {
+    setSearchText(value);
     if (value && value.length > 2) {
       setLoading(true);
       fetchSearchMovies({
@@ -42,24 +49,46 @@ export default function SearchScreen() {
     }
   };
 
-  // tunda pengiriman handlesearch sebanyak 400 detik dengan teknik debounce
+  const handleClearText = () => {
+    setSearchText('');
+    setResults([]);
+    setLoading(false);
+  };
+
+  const handleTextChange = value => {
+    setSearchText(value);
+    handleTextDebounce(value);
+  };
+  // tunda pengiriman handlesearch sebanyak 400 milidetik dengan teknik debounce
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleTextDebounce = useCallback(debounce(handleSearch, 400), []);
-  let movieName = 'Equalizer 3';
+  const handleShowMore = () => {
+    navigation.navigate('AllResultsScreen', {
+      searchText,
+      results,
+    });
+  };
   return (
-    <SafeAreaView className="bg-neutral-800 flex-1">
+    <SafeAreaView className={`bg-neutral-800 flex-1 ${ios ? 'pt-0' : 'pt-3'}`}>
       <View className="mx-4 mb-3 flex-row justify-between items-center border border-neutral-500 rounded-full">
+        <TouchableOpacity onPress={() => navigation.goBack()} className="p-3">
+          <ChevronLeftIcon size={24} color={theme.text} />
+        </TouchableOpacity>
         <TextInput
-          onChangeText={handleTextDebounce}
+          value={searchText}
+          onChangeText={handleTextChange}
           placeholder="Cari Film"
           placeholderTextColor={'lightgray'}
-          className="pb-1 pl-6 flex-1 text-base font-semibold text-white tracking-wider"
+          className="pl-5 flex-1 text-base font-semibold text-white tracking-wider"
+          autoFocus={true}
         />
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Home')}
-          className="rounded-full p-3 m-1 bg-neutral-500">
-          <XMarkIcon size={25} color="white" />
-        </TouchableOpacity>
+        {searchText.length > 0 && (
+          <TouchableOpacity
+            onPress={handleClearText}
+            className="rounded-full p-2 m-1 bg-neutral-500">
+            <XMarkIcon size={24} color="white" />
+          </TouchableOpacity>
+        )}
       </View>
       {/* hasil pencarian */}
       {loading ? (
@@ -81,7 +110,6 @@ export default function SearchScreen() {
                   <View className="space-y-2 mb-4">
                     <ProgressiveImage
                       className="rounded-3xl"
-                      //   source={require('../../assets/images/moviePoster2.jpeg')}
                       source={{
                         uri: image185(item?.poster_path) || fallbackMoviePoster,
                       }}
@@ -97,6 +125,15 @@ export default function SearchScreen() {
               );
             })}
           </View>
+
+          {/* Show More Button */}
+          <TouchableOpacity
+            onPress={handleShowMore}
+            className={`p-3 rounded-md mb-3`}>
+            <Text className={`font-semibold text-center `} style={styles.text}>
+              Show More
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       ) : (
         <View className="flex-row justify-center">

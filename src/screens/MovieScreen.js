@@ -41,12 +41,12 @@ export default function MovieScreen() {
   useEffect(() => {
     // console.log('itemid: ', item.id);
     setLoading(true);
-    getMoviDetails(item.id);
+    getMovieDetails(item.id);
     getMoviCredits(item.id);
     getSimilarMovies(item.id);
   }, [item]);
 
-  const getMoviDetails = async id => {
+  const getMovieDetails = async id => {
     const data = await fetchMovieDetails(id);
     // console.log('got movie details: ', data);
     if (data && !data?.error) {

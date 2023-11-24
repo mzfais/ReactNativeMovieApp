@@ -61,7 +61,7 @@ export default function HomeScreen() {
   return (
     <View className="flex-1 bg-neutral-800">
       {/* search bar */}
-      <SafeAreaView className={ios ? '-mb-2' : 'mb-3'}>
+      <SafeAreaView className={ios ? '-mb-2' : 'mb-3 pt-3'}>
         <StatusBar style="light" />
         <View className="flex-row justify-between items-center mx-4">
           <Bars3CenterLeftIcon size={30} strokeWidth={2} color="white" />
@@ -84,10 +84,18 @@ export default function HomeScreen() {
           {trending.length > 0 && <TrendingMovies data={trending} />}
 
           {/* daftar film akan tayang */}
-          <MovieList title="Akan Tayang" data={upcoming} />
+          <MovieList
+            title="Akan Tayang"
+            data={upcoming}
+            seeAllScreen="Upcoming"
+          />
 
           {/* daftar film rating tertinggi */}
-          <MovieList title="Rating Teratas" data={topRated} />
+          <MovieList
+            title="Rating Teratas"
+            data={topRated}
+            seeAllScreen="TopRated"
+          />
         </ScrollView>
       )}
     </View>
