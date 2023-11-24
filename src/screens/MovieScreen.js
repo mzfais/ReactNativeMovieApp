@@ -72,13 +72,13 @@ export default function MovieScreen() {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={{paddingBottom: 20}}
-      className="flex-1 bg-neutral-900">
+    <View className="flex-1 bg-neutral-800">
       {loading ? (
         <Loading />
       ) : (
-        <>
+        <ScrollView
+          contentContainerStyle={{paddingBottom: 20}}
+          className="flex-1 bg-neutral-900">
           {/* back button dan poster */}
           <View className="w-full">
             <SafeAreaView
@@ -176,8 +176,8 @@ export default function MovieScreen() {
               )}
             </>
           )}
-        </>
+        </ScrollView>
       )}
-    </ScrollView>
+    </View>
   );
 }
