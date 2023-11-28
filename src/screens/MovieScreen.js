@@ -24,6 +24,7 @@ import {
   fetchSimilarMovies,
   image500,
 } from '../api/MovieDb';
+import {addEventListener, fetch} from '@react-native-community/netinfo';
 
 var {width, height} = Dimensions.get('window');
 const ios = Platform.OS === 'ios';
@@ -37,16 +38,61 @@ export default function MovieScreen() {
   const [loading, setLoading] = useState(false);
   const [movie, setMovie] = useState({});
   const [isError, setIsError] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
 
+  const checkConnection = async () => {
+    // Periksa koneksi dan ambil data lokal jika tidak terhubung
+    const connected = await fetch();
+    setIsConnected(connected);
+    console.log('cek koneksi');
+  };
   useEffect(() => {
+    const unsubscribe = addEventListener(state => {
+      setIsConnected(state.isConnected);
+      if (state.isConnected) {
+        //proses upload ke server
+        console.log('state', state);
+        console.log('tipe', state.type);
+        console.log('is-connected', state.isConnected);
+        sendLocalToServer();
+      } else {
+        console.log('koneksi terputus');
+      }
+      // if (isConnected && movie === undefined) {
+      getMovieDetails(item.id);
+      getMoviCredits(item.id);
+      getSimilarMovies(item.id);
+      // }
+    });
     // console.log('itemid: ', item.id);
-    setLoading(true);
-    getMovieDetails(item.id);
-    getMoviCredits(item.id);
-    getSimilarMovies(item.id);
+    // getMovieDetails(item.id);
+    // getMoviCredits(item.id);
+    // getSimilarMovies(item.id);
+    return () => unsubscribe;
   }, [item]);
 
+  const sendLocalToServer = () => {
+    console.log('coba kirim data lokal ke server');
+    /*
+
+    cek data di storage
+    kalau ada data, lakukan kirim data ke server
+    kalau berhasil, hapus data di local
+    kalau gagal, try again dan jangan hapus data di local
+
+    */
+  };
+
+  const handleSaveData = () => {
+    /*
+    coba kirim data ke server
+    kalau gagal, simpan data ke local
+    */
+  };
+
   const getMovieDetails = async id => {
+    setLoading(true);
+    setIsError(false);
     const data = await fetchMovieDetails(id);
     // console.log('got movie details: ', data);
     if (data && !data?.error) {
@@ -131,7 +177,7 @@ export default function MovieScreen() {
           {/* detil film */}
           {isError ? (
             <Text className="text-white text-center text-3xl font-bold tracking-wider m-1">
-              Silahkan cek koneksi Internet Anda
+              Periksa jaringan internet Anda
             </Text>
           ) : (
             <>
