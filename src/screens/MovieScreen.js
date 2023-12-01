@@ -25,6 +25,7 @@ import {
   image500,
 } from '../api/MovieDb';
 import {addEventListener, fetch} from '@react-native-community/netinfo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 var {width, height} = Dimensions.get('window');
 const ios = Platform.OS === 'ios';
@@ -39,56 +40,26 @@ export default function MovieScreen() {
   const [movie, setMovie] = useState({});
   const [isError, setIsError] = useState(false);
   const [isConnected, setIsConnected] = useState(true);
-
-  const checkConnection = async () => {
-    // Periksa koneksi dan ambil data lokal jika tidak terhubung
-    const connected = await fetch();
-    setIsConnected(connected);
-    console.log('cek koneksi');
-  };
   useEffect(() => {
     const unsubscribe = addEventListener(state => {
       setIsConnected(state.isConnected);
-      if (state.isConnected) {
-        //proses upload ke server
-        console.log('state', state);
-        console.log('tipe', state.type);
-        console.log('is-connected', state.isConnected);
-        sendLocalToServer();
-      } else {
-        console.log('koneksi terputus');
-      }
+      console.log('tipe jaringan', state.type);
+      console.log('status koneksi', isConnected);
       // if (isConnected && movie === undefined) {
       getMovieDetails(item.id);
       getMoviCredits(item.id);
       getSimilarMovies(item.id);
+      // cek data di lokal dan simpan ke server
+      // kalau proses simpan berhasil, maka hapus data yg di local
       // }
     });
+    loadFavouriteData();
     // console.log('itemid: ', item.id);
     // getMovieDetails(item.id);
     // getMoviCredits(item.id);
     // getSimilarMovies(item.id);
     return () => unsubscribe;
   }, [item]);
-
-  const sendLocalToServer = () => {
-    console.log('coba kirim data lokal ke server');
-    /*
-
-    cek data di storage
-    kalau ada data, lakukan kirim data ke server
-    kalau berhasil, hapus data di local
-    kalau gagal, try again dan jangan hapus data di local
-
-    */
-  };
-
-  const handleSaveData = () => {
-    /*
-    coba kirim data ke server
-    kalau gagal, simpan data ke local
-    */
-  };
 
   const getMovieDetails = async id => {
     setLoading(true);
@@ -117,6 +88,56 @@ export default function MovieScreen() {
     // setLoading(false);
   };
 
+  const loadFavouriteData = async () => {
+    try {
+      // Ambil data dari penyimpanan lokal (AsyncStorage)
+      console.log('ambil data favorite dari storage');
+      const favData = await AsyncStorage.getItem('myFav');
+      if (favData !== null) {
+        // console.log('Data retrieved from local storage:', favData);
+        // cek id movie
+        const movies = JSON.parse(favData);
+        console.log('movie favorite list', movies);
+        // setFavoriteMovies(movies);
+        if (Array.isArray(movies)) {
+          const isMovieFav = movies.filter(
+            movieItem => movieItem.id === item.id,
+          );
+          toggleFavorite(isMovieFav.length > 0 ? true : false);
+          console.log('is Movie favourite', isMovieFav);
+        }
+      }
+    } catch (error) {
+      console.error('Error retrieving local data:', error);
+    }
+  };
+
+  const handleFavourite = async () => {
+    toggleFavorite(!isFavorite);
+    const existingFav = await AsyncStorage.getItem('myFav');
+    console.log('existing favourite', existingFav);
+    const thisMovie = {id: item.id, title: item.title};
+    // jika favorite gabung data film dengan data sebelumnya
+    // jika unfavorite filter film untuk menghilangkan film terpilih
+    const newFavoriteMovies = existingFav
+      ? !isFavorite
+        ? [...JSON.parse(existingFav), thisMovie]
+        : JSON.parse(existingFav).filter(movieItem => movieItem.id !== item.id)
+      : [thisMovie];
+
+    console.log('set favorite movies', newFavoriteMovies);
+    // Menyimpan daftar film favorit ke local storage
+    saveFavoriteMovies(newFavoriteMovies);
+  };
+
+  const saveFavoriteMovies = async movies => {
+    try {
+      await AsyncStorage.setItem('myFav', JSON.stringify(movies));
+    } catch (error) {
+      console.error('Error saving favorite movies:', error);
+    }
+  };
+
   return (
     <View className="flex-1 bg-neutral-800">
       {loading ? (
@@ -138,7 +159,7 @@ export default function MovieScreen() {
                 onPress={() => navigation.goBack()}>
                 <ChevronLeftIcon size={28} strokeWidth={2.5} color="white" />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => toggleFavorite(!isFavorite)}>
+              <TouchableOpacity onPress={() => handleFavourite()}>
                 <HeartIcon
                   size={35}
                   color={isFavorite ? theme.background : 'white'}
