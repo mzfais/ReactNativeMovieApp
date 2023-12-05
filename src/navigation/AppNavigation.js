@@ -1,8 +1,5 @@
 import {NavigationContainer} from '@react-navigation/native';
-import {
-  createNativeStackNavigator,
-  TransitionPresets,
-} from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import HomeScreen from '../screens/HomeScreen';
 import MovieScreen from '../screens/MovieScreen';

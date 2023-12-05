@@ -5,11 +5,10 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import Carousel from 'react-native-snap-carousel';
 import {useNavigation} from '@react-navigation/native';
 import {image500} from '../api/MovieDb';
-import ProgressiveImage from 'rn-progressive-image';
 
 var {width, height} = Dimensions.get('window');
 export default function TrendingMovies({data}) {

@@ -93,6 +93,7 @@ export default function MovieScreen() {
       // Ambil data dari penyimpanan lokal (AsyncStorage)
       console.log('ambil data favorite dari storage');
       const favData = await AsyncStorage.getItem('myFav');
+      console.log('ambil data favorite dari storage', favData);
       if (favData !== null) {
         // console.log('Data retrieved from local storage:', favData);
         // cek id movie
@@ -111,7 +112,6 @@ export default function MovieScreen() {
       console.error('Error retrieving local data:', error);
     }
   };
-
   const handleFavourite = async () => {
     toggleFavorite(!isFavorite);
     const existingFav = await AsyncStorage.getItem('myFav');

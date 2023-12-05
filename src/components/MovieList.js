@@ -4,7 +4,6 @@ import {
   TouchableOpacity,
   ScrollView,
   TouchableWithoutFeedback,
-  Image,
   Dimensions,
 } from 'react-native';
 import React from 'react';
@@ -16,7 +15,6 @@ import ProgressiveImage from 'rn-progressive-image';
 var {width, height} = Dimensions.get('window');
 
 export default function MovieList({title, data, hideSeeAll, seeAllScreen}) {
-  let movieName = 'Equalizer 3';
   const navigation = useNavigation();
   return (
     <View className="mb-8 space-y-4">

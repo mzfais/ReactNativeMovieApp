@@ -143,7 +143,7 @@ export default function PersonScreen() {
           <MovieList
             title={'Riwayat Perfilman'}
             hideSeeAll={true}
-            data={personMovies}
+            data={personMovies.slice(0, 10)}
           />
         </View>
       )}

@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedback,
   Image,
   Platform,
-  StatusBar,
 } from 'react-native';
 import React, {useCallback, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
